@@ -1,0 +1,130 @@
+C51 COMPILER V9.53.0.0   MAIN                                                              11/01/2018 11:05:30 PAGE 1   
+
+
+C51 COMPILER V9.53.0.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\src\main.OBJ
+COMPILER INVOKED BY: c:\SiliconLabs\SimplicityStudio\v4\developer\toolchains\keil_8051\9.53\BIN\C51.exe C:\Users\Mikropr
+                    -\SimplicityStudio\v4_workspace\EEPROM_AT24C32N_EFM8LB1\src\main.c OMF2 SMALL DEBUG OBJECTEXTEND ROM(LARGE) WARNINGLEVEL(
+                    -2) FLOATFUZZY(3) OPTIMIZE(8,SPEED) DEFINE(DEBUG=1) INTVECTOR(0X0000) INTPROMOTE INCDIR(C:\Users\Mikropr\SimplicityStudio
+                    -\v4_workspace\EEPROM_AT24C32N_EFM8LB1\inc;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.2//Device/shared/s
+                    -i8051base;C:/SiliconLabs/SimplicityStudio/v4/developer/sdks/8051/v4.1.2//Device/EFM8LB1/inc) PRINT(.\src\main.lst) COND 
+                    -PAGEWIDTH(120) PAGELENGTH(65) OBJECT(.\src\main.OBJ)
+
+line level    source
+
+   1          //-----------------------------------------------------------------------------
+   2          // Includes
+   3          //-----------------------------------------------------------------------------
+   4          #include <SI_EFM8LB1_Register_Enums.h>
+   5          #include "InitDevice.h"
+   6          #include "eeprom.h"
+   7          
+   8          //-----------------------------------------------------------------------------
+   9          // Global Variable
+  10          //-----------------------------------------------------------------------------
+  11          uint8_t limit = 0;
+  12          uint8_t n, d, k;
+  13          uint32_t eepromArray[6] = {0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF};
+  14          uint32_t rearEEPROM[6];
+  15          
+  16          void readArr (unsigned char start_address);
+  17          void writeArr (unsigned char start_address);
+  18          
+  19          void SiLabs_Startup (void) {
+  20   1      
+  21   1      }
+  22           
+  23          //-----------------------------------------------------------------------------
+  24          // MAIN Routine
+  25          //-----------------------------------------------------------------------------
+  26          void main(void) {
+  27   1      //   uint32_t f_byte, s_byte, t_byte, fo_byte, fi_byte, si_byte;
+  28   1         uint8_t error_flag = 0;
+  29   1         uint8_t startAddress = 0;
+  30   1         enter_BusFreeMode_from_RESET();
+  31   1      
+  32   1         EEPROM_CheckSDA ();
+  33   1      
+  34   1         enter_DefaultMode_from_BusFreeMode();
+  35   1      
+  36   1         IE_EA = 1;                          // Global interrupt enable
+  37   1      ///----------------------------------------------------------------------------
+  38   1      
+  39   1         // Write the value 0x05 to location 0x003 in the EEPROM
+  40   1      //   EEPROM_ByteWrite(0x00, 0x03, 0x05);
+  41   1         // Read the value from location 0x003 in the EEPROM
+  42   1      //   f_byte = EEPROM_ByteRead(0x00, 0x03);
+  43   1      //   if(f_byte != 0x05) {
+  44   1      //         error_flag++;
+  45   1      //   }
+  46   1      
+  47   1      //   f_byte = EEPROM_ByteRead(0x00, 0x02);
+  48   1      //   t_byte = EEPROM_ByteRead(0x00, 0x05);
+  49   1      //   fi_byte = EEPROM_ByteRead(0x00, 0x01);
+  50   1      //   si_byte = EEPROM_ByteRead(0x00, 0x00);
+  51   1      
+C51 COMPILER V9.53.0.0   MAIN                                                              11/01/2018 11:05:30 PAGE 2   
+
+  52   1      //   for(i = 0; i < 6; i++) {
+  53   1      //         EEPROM_ByteWrite(0x00, i, eepromArray[i]);
+  54   1      //         for(d = 0; d < 150; d++);
+  55   1      //   }
+  56   1      
+  57   1         writeArr(0x05);
+  58   1         readArr(0x05);
+  59   1      ///----------------------------------------------------------------------------
+  60   1      
+  61   1         while(1);
+  62   1      }
+  63          
+  64          // Read 6 byte
+  65          void readArr (unsigned char start_address) {
+  66   1              limit = start_address + 6;
+  67   1      
+  68   1              for (n = start_address; n < limit; n++) {
+  69   2      
+  70   2                      if(k < 6) {
+  71   3                              rearEEPROM[k] = EEPROM_ByteRead(0x00, n);
+  72   3                              k++;
+  73   3                      } else {
+  74   3                              k = 0;
+  75   3                      }
+  76   2      
+  77   2                      for(d = 0; d < 150; d++);
+  78   2              }
+  79   1      }
+  80          
+  81          // Write 6 byte
+  82          void writeArr (unsigned char start_address) {
+  83   1              limit = start_address + 6;
+  84   1      
+  85   1              for(n = start_address; n < limit; n++) {
+  86   2      
+  87   2                      if(k < 6) {
+  88   3                              EEPROM_ByteWrite(0x00, n, eepromArray[k]);
+  89   3                              k++;
+  90   3                      } else {
+  91   3                              k = 0;
+  92   3                      }
+  93   2      
+  94   2                      for(d = 0; d < 150; d++);
+  95   2              }
+  96   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    159    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     52       2
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+   EDATA SIZE       =   ----    ----
+   HDATA SIZE       =   ----    ----
+   XDATA CONST SIZE =   ----    ----
+   FAR CONST SIZE   =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
